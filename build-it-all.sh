@@ -21,6 +21,11 @@ export CFLAGS="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fn
 # work-around for libtool bug:
 export echo=echo
 
+# work-around for aclocal:
+mkdir -p $TARGET/usr/share/aclocal
+
+escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
+
 ###############################################################################
 # Components to build in dependency order with configure args:
 
@@ -103,6 +108,11 @@ function build_it() {
 		echo "### configure"
 		mkdir -p $build_dir
 		(cd $build_dir; ../configure $args $extra_configure_args) || return 1
+		if [ -r $build_dir/config.h ]; then
+			sed s/"$escaped_target"//g $build_dir/config.h > $build_dir/.tmp.config.h &&
+				mv $build_dir/.tmp.config.h $build_dir/config.h
+			cat $build_dir/config.h
+		fi
 	fi
 
 	echo ""
