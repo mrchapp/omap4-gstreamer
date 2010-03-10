@@ -138,12 +138,18 @@ function clean_it() {
 	fi
 }
 
+yes_all="false"
 function prompt_yes_no() {
+	if [ $yes_all = "true" ]; then
+		echo "  Y/N/A> a"
+		return 0
+	fi
 	while `true`; do
-		echo -n "  Y/N> "
+		echo -n "  Y/N/A> "
 		read -n 1 result
 		echo ""
 		case $result in
+			A|a) yes_all="true"; return 0 ;;
 			Y|y) return 0 ;;
 			N|n) return 1 ;;
 			*) echo "invalid input: $result"
@@ -166,7 +172,7 @@ function check_update_submodule_status() {
 
 check_update_submodule_status . || exit $?
 check_update_submodule_status omap4-omx || exit $?
-
+yes_all="false"   # reset in case someone adds other calls to prompt_yes_no()
 
 ###############################################################################
 # Argument parsing:
