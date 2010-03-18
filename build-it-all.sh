@@ -63,7 +63,7 @@ components="\
 "
 # todo.. add gst-plugin-bc if dependencies are satisfied..
 
-source $dir/omap4-omx/common-build-utils.sh
+source $dir/common-build-utils.sh
 
 ###############################################################################
 # Argument parsing:
