@@ -68,6 +68,8 @@ source $dir/common-build-utils.sh
 ###############################################################################
 # Argument parsing:
 
+DEBUG_CFLAGS="-O3"     # Default optimize instead of debug..
+
 for arg in $*; do
 	# todo.. add args for kernel and gfx ddk path..
 	case $arg in
@@ -79,10 +81,23 @@ for arg in $*; do
 			do_it=clean_it
 			shift 1
 			;;
+		--debug)
+			DEBUG_CFLAGS="-g"
+			shift 1
+			;;
+		--with-*|--enable-*|--disable-*)
+			echo "adding extra_configure_args: $arg"
+			extra_configure_args="$extra_configure_args $arg"
+			shift 1
+			;;
 		--help)
 			echo "$0 [--force-bootstrap] [--clean] [component-path]*"
 			echo "	--force-bootstrap  -  re-run bootstrap and configure even if it has already been run"
 			echo "	--clean            -  clean derived objects"
+			echo "	--debug            -  build debug build"
+			echo "  --with-*           -  passed to configure scripts"
+			echo "  --enable-*         -  passed to configure scripts"
+			echo "  --disable-*        -  passed to configure scripts"
 			echo "	--help             -  show usage"
 			echo ""
 			echo "  example:  $0 --force-bootstrap syslink/bridge audio-omx/system/lcml"
@@ -94,6 +109,8 @@ for arg in $*; do
 			;;
 	esac
 done
+
+CFLAGS="$DEBUG_CFLAGS $CFLAGS"
 
 yes_all="false"   # reset yes/no/all to != all..
 check_update_submodule_status . || exit $?
