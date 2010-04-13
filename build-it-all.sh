@@ -44,16 +44,11 @@ components="\
 	faad2             $CONFIG_COMMON
 	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
 	ttif              $CONFIG_COMMON
-	omap4-omx/syslink/bridge                $CONFIG_COMMON
 	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
 	omap4-omx/syslink/syslink               $CONFIG_COMMON
-	omap4-omx/tiler/d2c                     $CONFIG_COMMON
+	omap4-omx/syslink/syslink/d2c           $CONFIG_COMMON
 	omap4-omx/system-omx/system/omx_core    $CONFIG_COMMON
-	omap4-omx/audio-omx/system/lcml         $CONFIG_COMMON
 	omap4-omx/system-omx/system/mm_osal     $CONFIG_COMMON
-	omap4-omx/audio-omx/system/omx_base     $CONFIG_COMMON
-	omap4-omx/audio-omx/audio/audio_decode  $CONFIG_COMMON
-	omap4-omx/audio-omx/audio/audio_encode  $CONFIG_COMMON
 	omap4-omx/domx                          $CONFIG_COMMON
 	gst-plugins-base  $CONFIG_GST_COMMON
 	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
