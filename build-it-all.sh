@@ -53,6 +53,7 @@ components="\
 	gst-plugins-base  $CONFIG_GST_COMMON
 	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
 	gst-plugins-bad   $CONFIG_GST_COMMON
+	gst-plugins-ugly  $CONFIG_GST_COMMON
 	gst-plugin-h264   $CONFIG_GST_COMMON
 	gst-openmax       $CONFIG_GST_COMMON
 "
@@ -99,7 +100,7 @@ for arg in $*; do
 			exit 0
 			;;
 		*)
-			components="$*"
+			build_components="$*"
 			break
 			;;
 	esac

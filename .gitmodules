@@ -43,3 +43,6 @@
 [submodule "gtk-doc"]
 	path = gtk-doc
 	url = git://git.gnome.org/gtk-doc.git
+[submodule "gst-plugins-ugly"]
+	path = gst-plugins-ugly
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-plugins-ugly.git

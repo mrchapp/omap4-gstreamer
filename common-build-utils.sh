@@ -123,6 +123,12 @@ function main_loop() {
 "
 	for line in $components; do
 		IFS=$SAVED_IFS
+		if [ -n "$build_components" ]; then
+			component=${line%% *}
+			if ! `echo $build_components | grep $component > /dev/null 2>&1`; then
+				continue
+			fi
+		fi
 		$do_it $line
 		if [ $? != 0 ]; then
 			echo "failed on $component, bailing out"
