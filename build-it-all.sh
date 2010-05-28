@@ -14,6 +14,7 @@ export TARGET=${TARGET:-`pwd`/target}
 export NOCONFIGURE=1
 export AUTOGEN_SUBDIR_MODE=1
 export PREFIX=$TARGET/usr
+export DIST_DIR=$PREFIX
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig
 export PATH=$PREFIX/bin:$PATH
 export ACLOCAL_FLAGS="-I $PREFIX/share/aclocal"
@@ -42,6 +43,7 @@ components="\
 	libxml2           $CONFIG_COMMON
 	liboil            $CONFIG_COMMON
 	faad2             $CONFIG_COMMON
+	libvpx            --target=armv7-linux-gcc --enable-vp8 --enable-debug-libs --enable-debug
 	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
 	ttif              $CONFIG_COMMON
 	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
@@ -52,7 +54,7 @@ components="\
 	omap4-omx/domx                          $CONFIG_COMMON
 	gst-plugins-base  $CONFIG_GST_COMMON
 	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
-	gst-plugins-bad   $CONFIG_GST_COMMON
+	gst-plugins-bad   $CONFIG_GST_COMMON LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include
 	gst-plugins-ugly  $CONFIG_GST_COMMON
 	gst-plugin-h264   $CONFIG_GST_COMMON
 	gst-openmax       $CONFIG_GST_COMMON
