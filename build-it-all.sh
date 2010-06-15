@@ -45,7 +45,7 @@ escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
 
 cross_args=""
 if [ $cross_compile = "true" ]; then
-	cross_args = "--host=arm-none-linux-gnueabi"
+	cross_args="--host=arm-none-linux-gnueabi"
 fi
 
 CONFIG_COMMON="$cross_args --prefix=$PREFIX"
@@ -81,7 +81,8 @@ components="\
 # todo.. add gst-plugin-bc if dependencies are satisfied..
 
 if [ $cross_compile = "true" ]; then
-	components="$components\n$cross_components"
+	components="$components
+	$cross_components"
 fi
 
 source $dir/common-build-utils.sh
