@@ -48,4 +48,4 @@
 	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-plugins-ugly.git
 [submodule "libvpx"]
 	path = libvpx
-	url = git://review.webmproject.org/libvpx.git
+	url = git://gitorious.org/robclark-gstreamer/libvpx.git

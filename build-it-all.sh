@@ -58,9 +58,11 @@ cross_components="\
 	libxml2           $CONFIG_COMMON
 	liboil            $CONFIG_COMMON
 	faad2             $CONFIG_COMMON
-	libvpx            --target=armv7-linux-gcc --enable-vp8 --enable-debug-libs --enable-debug
 "
+# note: for now libvpx is in components section, because ubuntu package doesn't
+#   seem to exist yet
 components="\
+	libvpx            --target=armv7-linux-gcc --enable-vp8 --enable-pic
 	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
 	ttif              $CONFIG_COMMON
 	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
@@ -81,9 +83,6 @@ components="\
 if [ $cross_compile = "true" ]; then
 	components="$components\n$cross_components"
 fi
-
-echo "components:\n$components"
-exit 1
 
 source $dir/common-build-utils.sh
 

@@ -62,15 +62,15 @@ function build_it() {
 	echo "### make $component"
 	(cd $build_dir; make -w -j4) || return 1
 
-	echo ""
-	echo "### install $component"
-	(cd $build_dir; $sudo_cmd make install) || return 1
-
 	if [ $package = "true" ]; then
 		echo ""
 		echo "### package $component"
-		(cd $build_dir; make install DESTDIR=$TARGET/$PREFIX) || return 1
+		(cd $build_dir; $sudo_cmd make install DESTDIR=$TARGET) || return 1
 	fi
+
+	echo ""
+	echo "### install $component"
+	(cd $build_dir; $sudo_cmd make install) || return 1
 }
 
 function clean_it() {
