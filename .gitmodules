@@ -3,22 +3,22 @@
 	url = git://dev.omapzoom.org/pub/scm/robclark/omap4-omx.git
 [submodule "gst-openmax"]
 	path = gst-openmax
-	url = git://gitorious.org/robclark-gstreamer/gst-openmax.git
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-openmax.git
 [submodule "gst-plugin-h264"]
 	path = gst-plugin-h264
 	url = git://gitorious.org/robclark-gstreamer/gst-plugin-h264.git
 [submodule "gst-plugins-base"]
 	path = gst-plugins-base
-	url = git://gitorious.org/robclark-gstreamer/gst-plugins-base.git
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-plugins-base.git
 [submodule "gst-plugins-good"]
 	path = gst-plugins-good
-	url = git://gitorious.org/robclark-gstreamer/gst-plugins-good.git
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-plugins-good.git
 [submodule "gst-plugins-bad"]
 	path = gst-plugins-bad
-	url = git://gitorious.org/robclark-gstreamer/gst-plugins-bad.git
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-plugins-bad.git
 [submodule "gstreamer"]
 	path = gstreamer
-	url = git://gitorious.org/robclark-gstreamer/gstreamer.git
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gstreamer.git
 [submodule "faad2"]
 	path = faad2
 	url = git://git.debian.org/pkg-multimedia/faad2.git
@@ -36,7 +36,7 @@
 	url = git://git.sv.gnu.org/bash.git
 [submodule "gst-plugin-bc"]
 	path = gst-plugin-bc
-	url = git://gitorious.org/gst-plugin-bc/gst-plugin-bc.git
+	url = git://dev.omapzoom.org/pub/scm/gstreamer/gst-plugin-bc.git
 [submodule "ttif"]
 	path = ttif
 	url = git://sealion.sc.ti.com/git/ttif.git
