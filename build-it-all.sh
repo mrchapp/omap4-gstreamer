@@ -62,7 +62,7 @@ cross_components="\
 # note: for now libvpx is in components section, because ubuntu package doesn't
 #   seem to exist yet
 components="\
-	libvpx            --target=armv7-linux-gcc --enable-vp8 --enable-pic
+	libvpx            --target=armv7-linux-gcc --disable-vp8-encoder --enable-vp8-decoder --enable-pic --enable-debug
 	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
 	ttif              $CONFIG_COMMON
 	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
