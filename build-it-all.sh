@@ -91,6 +91,7 @@ source $dir/common-build-utils.sh
 # Argument parsing:
 
 DEBUG_CFLAGS="-O3"     # Default optimize instead of debug..
+yes_all="false"        # reset yes/no/all to != all..
 
 for arg in $*; do
 	# todo.. add args for kernel and gfx ddk path..
@@ -122,6 +123,10 @@ for arg in $*; do
 			extra_configure_args="$extra_configure_args $arg"
 			shift 1
 			;;
+		--yes)
+			yes_all="true"
+			shift 1
+			;;
 		--help)
 			echo "$0 [--force-bootstrap] [--clean] [component-path]*"
 			echo "	--force-bootstrap  -  re-run bootstrap and configure even if it has already been run"
@@ -132,6 +137,7 @@ for arg in $*; do
 			echo "  --with-*           -  passed to configure scripts"
 			echo "  --enable-*         -  passed to configure scripts"
 			echo "  --disable-*        -  passed to configure scripts"
+			echo "  --yes              -  say yes to all questions"
 			echo "	--help             -  show usage"
 			echo ""
 			echo "  example:  $0 --force-bootstrap syslink/bridge audio-omx/system/lcml"
@@ -146,7 +152,6 @@ done
 
 CFLAGS="$DEBUG_CFLAGS $CFLAGS"
 
-yes_all="false"   # reset yes/no/all to != all..
 check_update_submodule_status . || exit $?
 check_update_submodule_status omap4-omx || exit $?
 yes_all="false"   # reset in case someone adds other calls to prompt_yes_no()
