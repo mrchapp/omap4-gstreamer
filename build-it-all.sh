@@ -71,6 +71,10 @@ for arg in $*; do
 			yes_all="true"
 			shift 1
 			;;
+		--prefix=*)
+			PREFIX=${arg##*=}
+			shift 1
+			;;
 		--help)
 			echo "$0 [--force-bootstrap] [--clean] [component-path]*"
 			echo "	--force-bootstrap  -  re-run bootstrap and configure even if it has already been run"
@@ -82,6 +86,7 @@ for arg in $*; do
 			echo "	--enable-*         -  passed to configure scripts"
 			echo "	--disable-*        -  passed to configure scripts"
 			echo "	--yes              -  say yes to all questions"
+			echo "	--prefix=/dir      -  set prefix to install in /dir"
 			echo "	--help             -  show usage"
 			echo ""
 			echo "  example:  $0 --force-bootstrap syslink/bridge audio-omx/system/lcml"
