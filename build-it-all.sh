@@ -28,65 +28,6 @@ if [ $cross_compile = "true" ]; then
 else
 	PREFIX=/usr
 fi
-export PREFIX
-export DIST_DIR=$PREFIX
-export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig
-export PATH=$PREFIX/bin:$PATH
-export ACLOCAL_FLAGS="-I $PREFIX/share/aclocal"
-export CFLAGS="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fno-tree-vectorize"
-
-# work-around for libtool bug:
-export echo=echo
-
-# work-around for aclocal:
-mkdir -p $TARGET/usr/share/aclocal
-
-escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
-
-###############################################################################
-# Components to build in dependency order with configure args:
-
-cross_args=""
-if [ $cross_compile = "true" ]; then
-	cross_args="--host=arm-none-linux-gnueabi"
-fi
-
-CONFIG_COMMON="$cross_args --prefix=$PREFIX"
-CONFIG_GST_COMMON="$CONFIG_COMMON --disable-examples --disable-tests --disable-failing-tests --disable-valgrind"
-
-cross_components="\
-	bash              $CONFIG_COMMON
-	gtk-doc           $CONFIG_COMMON
-	glib              $CONFIG_COMMON
-	libxml2           $CONFIG_COMMON
-	liboil            $CONFIG_COMMON
-	faad2             $CONFIG_COMMON
-"
-# note: for now libvpx is in components section, because ubuntu package doesn't
-#   seem to exist yet
-components="\
-	libvpx            --target=armv7-linux-gcc --disable-vp8-encoder --enable-vp8-decoder --enable-pic --enable-debug
-	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
-	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
-	omap4-omx/syslink/syslink               $CONFIG_COMMON
-	omap4-omx/syslink/syslink/d2c           $CONFIG_COMMON
-	omap4-omx/system-omx/system/omx_core    $CONFIG_COMMON
-	omap4-omx/system-omx/system/mm_osal     $CONFIG_COMMON
-	omap4-omx/domx                          $CONFIG_COMMON
-	ttif              $CONFIG_COMMON
-	gst-plugins-base  $CONFIG_GST_COMMON
-	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
-	gst-plugins-bad   $CONFIG_GST_COMMON LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include
-	gst-plugins-ugly  $CONFIG_GST_COMMON --disable-realmedia
-	gst-plugin-h264   $CONFIG_GST_COMMON
-	gst-openmax       $CONFIG_GST_COMMON
-"
-# todo.. add gst-plugin-bc if dependencies are satisfied..
-
-if [ $cross_compile = "true" ]; then
-	components="$components
-	$cross_components"
-fi
 
 source $dir/common-build-utils.sh
 
@@ -152,6 +93,66 @@ for arg in $*; do
 			;;
 	esac
 done
+
+export PREFIX
+export DIST_DIR=$PREFIX
+export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig
+export PATH=$PREFIX/bin:$PATH
+export ACLOCAL_FLAGS="-I $PREFIX/share/aclocal"
+export CFLAGS="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fno-tree-vectorize"
+
+# work-around for libtool bug:
+export echo=echo
+
+# work-around for aclocal:
+mkdir -p $TARGET/usr/share/aclocal
+
+escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
+
+###############################################################################
+# Components to build in dependency order with configure args:
+
+cross_args=""
+if [ $cross_compile = "true" ]; then
+	cross_args="--host=arm-none-linux-gnueabi"
+fi
+
+CONFIG_COMMON="$cross_args --prefix=$PREFIX"
+CONFIG_GST_COMMON="$CONFIG_COMMON --disable-examples --disable-tests --disable-failing-tests --disable-valgrind"
+
+cross_components="\
+	bash              $CONFIG_COMMON
+	gtk-doc           $CONFIG_COMMON
+	glib              $CONFIG_COMMON
+	libxml2           $CONFIG_COMMON
+	liboil            $CONFIG_COMMON
+	faad2             $CONFIG_COMMON
+"
+# note: for now libvpx is in components section, because ubuntu package doesn't
+#   seem to exist yet
+components="\
+	libvpx            --target=armv7-linux-gcc --disable-vp8-encoder --enable-vp8-decoder --enable-pic --enable-debug
+	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
+	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
+	omap4-omx/syslink/syslink               $CONFIG_COMMON
+	omap4-omx/syslink/syslink/d2c           $CONFIG_COMMON
+	omap4-omx/system-omx/system/omx_core    $CONFIG_COMMON
+	omap4-omx/system-omx/system/mm_osal     $CONFIG_COMMON
+	omap4-omx/domx                          $CONFIG_COMMON
+	ttif              $CONFIG_COMMON
+	gst-plugins-base  $CONFIG_GST_COMMON
+	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
+	gst-plugins-bad   $CONFIG_GST_COMMON LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include
+	gst-plugins-ugly  $CONFIG_GST_COMMON --disable-realmedia
+	gst-plugin-h264   $CONFIG_GST_COMMON
+	gst-openmax       $CONFIG_GST_COMMON
+"
+# todo.. add gst-plugin-bc if dependencies are satisfied..
+
+if [ $cross_compile = "true" ]; then
+	components="$components
+	$cross_components"
+fi
 
 CFLAGS="$DEBUG_CFLAGS $CFLAGS"
 
