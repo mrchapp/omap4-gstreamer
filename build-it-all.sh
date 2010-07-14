@@ -9,8 +9,11 @@ if [ `uname -m` = "armv7l" ]; then
 	cross_compile="false"
 	sudo_cmd="sudo"
 elif [ `uname -m` != "arm" ]; then
-	echo "executing $0 $* in scratchbox!"
-	exec sb2 $0 $*
+	SB2=`which sb2`
+	if [ -n "${SB2}" ]; then
+		echo "Executing $0 $* in scratchbox!"
+		exec ${SB2} $0 $*
+	fi
 fi
 
 cd `dirname $0`
