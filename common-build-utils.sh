@@ -107,15 +107,61 @@ function prompt_yes_no() {
 }
 
 
+function git_update() {
+	gitrepo=$1
+	gitbranch=$2
+	if [ -n "$3" ]; then gitdir="$3"; else gitdir=; fi
+
+	# do we have a checkout?
+	if [ -d .git/ ]; then
+		have_checkout=true
+	else
+		have_checkout=false
+	fi
+
+	if [ "$have_checkout" = "true" ]; then
+		# try to pull from a predefined branch
+		git pull
+	else
+		# we need to git-clone first, maybe
+		pushd .. > /dev/null
+		git clone $gitrepo $gitdir
+		popd > /dev/null
+
+		# checkout specific branch (if there is one)
+		if [ -n "$gitbranch" ]; then
+			if [ ! "$gitbranch" = "master" ]; then
+				echo "Checking out branch $gitbranch..."
+				git checkout -b $gitbranch --track origin/$gitbranch
+			else
+				echo "Sticking to master branch"
+			fi
+		fi
+	fi
+}
+
+
 function check_update_submodule_status() {
 	dir=$1
 	pushd . > /dev/null
 	cd $dir
-	git submodule init
-	for submodule in `git submodule status | grep "^[-+]" | awk '{print $2}'`; do 
-		echo "Ok to update $dir/$submodule (which will overwrite any private changes you have made)?"
-		prompt_yes_no && force_bootstrap="yes" && git submodule update $submodule
-	done
+	if [ -f components.conf ]; then
+		for subcomp in `cat components.conf | awk '{print $1}'`; do
+			[ -d $subcomp ] || mkdir -p $subcomp
+			pushd $subcomp > /dev/null
+			# assume we're working and fetching
+			# from the the right branch
+			echo "Ok to update $dir/$subcomp (which will overwrite any private changes you have made)?"
+			prompt_yes_no && force_bootstrap="yes" && git_update `grep ^$subcomp ../components.conf | awk '{print $2,$3,$1}'`
+			popd > /dev/null
+		done
+	else
+		git submodule init
+		for submodule in `git submodule status | grep "^[-+]" | awk '{print $2}'`; do
+			echo "Ok to update $dir/$submodule (which will overwrite any private changes you have made)?"
+			prompt_yes_no && force_bootstrap="yes" && git submodule update $submodule
+		done
+	fi
 	popd > /dev/null
 }
 
