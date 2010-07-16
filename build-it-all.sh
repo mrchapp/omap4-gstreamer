@@ -141,8 +141,6 @@ components="\
 	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
 	omap4-omx/syslink/syslink               $CONFIG_COMMON
 	omap4-omx/syslink/syslink/d2c           $CONFIG_COMMON
-	omap4-omx/system-omx/system/omx_core    $CONFIG_COMMON
-	omap4-omx/system-omx/system/mm_osal     $CONFIG_COMMON
 	omap4-omx/domx                          $CONFIG_COMMON
 	ttif              $CONFIG_COMMON
 	gst-plugins-base  $CONFIG_GST_COMMON
