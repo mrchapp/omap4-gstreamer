@@ -191,3 +191,27 @@ function main_loop() {
 	echo "Success!"
 }
 
+function print_info_git() {
+	tag=`git describe --tags 2> /dev/null`
+	cid=`git log --oneline -1 2> /dev/null`
+	echo "$subcomp is known as [$tag]: $cid"
+}
+
+function print_info_dir() {
+	dir=$1
+	pushd $dir > /dev/null
+	if [ -f components.conf ]; then
+		for subcomp in `cat components.conf | awk '{print $1}'`; do
+			pushd $subcomp > /dev/null
+			print_info_git
+			popd > /dev/null
+		done
+	else
+		for submodule in `git submodule status | grep "^[-+]" | awk '{print $2}'`; do
+			pushd $submodule > /dev/null
+			print_info_git
+			popd > /dev/null
+		done
+	fi
+	popd > /dev/null
+}

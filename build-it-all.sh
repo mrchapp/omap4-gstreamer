@@ -167,5 +167,10 @@ yes_all="false"   # reset in case someone adds other calls to prompt_yes_no()
 mkdir -p omap4-omx/tiler/memmgr/m4
 mkdir -p omap4-omx/tiler/d2c/m4
 
+echo "*****"
+echo "Building on `uname -a`"
+echo "Umask is `umask`"
+print_info_dir .
+print_info_dir omap4-omx
+echo "*****"
 main_loop
-
