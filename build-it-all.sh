@@ -72,7 +72,8 @@ for arg in $*; do
 			shift 1
 			;;
 		--prefix=*)
-			PREFIX=${arg##*=}
+			TARGET=${arg##*=}
+			PREFIX=//
 			shift 1
 			;;
 		--help)
@@ -101,16 +102,16 @@ done
 
 export PREFIX
 export DIST_DIR=$PREFIX
-export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig
-export PATH=$PREFIX/bin:$PATH
-export ACLOCAL_FLAGS="-I $PREFIX/share/aclocal"
+export PKG_CONFIG_PATH=$TARGET/$PREFIX/lib/pkgconfig:$TARGET/$PREFIX/share/pkgconfig
+export PATH=$TARGET/$PREFIX/bin:$PATH
+export ACLOCAL_FLAGS="-I $TARGET/$PREFIX/share/aclocal"
 export CFLAGS="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fno-tree-vectorize"
 
 # work-around for libtool bug:
 export echo=echo
 
 # work-around for aclocal:
-mkdir -p $TARGET/usr/share/aclocal
+sudo mkdir -p $TARGET/$PREFIX/share/aclocal
 
 escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
 
@@ -145,7 +146,7 @@ components="\
 	ttif              $CONFIG_COMMON
 	gst-plugins-base  $CONFIG_GST_COMMON
 	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
-	gst-plugins-bad   $CONFIG_GST_COMMON LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include
+	gst-plugins-bad   $CONFIG_GST_COMMON LDFLAGS=-L$TARGET/$PREFIX/lib CFLAGS=-I$TARGET/$PREFIX/include
 	gst-plugins-ugly  $CONFIG_GST_COMMON --disable-realmedia
 	gst-plugin-h264   $CONFIG_GST_COMMON
 	gst-openmax       $CONFIG_GST_COMMON

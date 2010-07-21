@@ -50,7 +50,7 @@ function build_it() {
 		echo ""
 		echo "### configure"
 		mkdir -p $build_dir
-		(cd $build_dir; ../configure $args $extra_configure_args) || return 1
+		(cd $build_dir; ../configure --prefix=$PREFIX $args $extra_configure_args) || return 1
 		if [ -r $build_dir/config.h ]; then
 			sed s/"$escaped_target"//g $build_dir/config.h > $build_dir/.tmp.config.h &&
 				mv $build_dir/.tmp.config.h $build_dir/config.h
@@ -62,6 +62,10 @@ function build_it() {
 	echo "### make $component"
 	(cd $build_dir; make -w -j4) || return 1
 
+	echo ""
+	echo "### fix pkgconfig files"
+	fix_pkgconfig_files $build_dir $TARGET $PREFIX || return 1
+
 	if [ $package = "true" ]; then
 		echo ""
 		echo "### package $component"
@@ -70,7 +74,7 @@ function build_it() {
 
 	echo ""
 	echo "### install $component"
-	(cd $build_dir; $sudo_cmd make install) || return 1
+	(cd $build_dir; $sudo_cmd make install DESTDIR=$TARGET) || return 1
 }
 
 function clean_it() {
@@ -163,6 +167,31 @@ function check_update_submodule_status() {
 		done
 	fi
 	popd > /dev/null
+}
+
+
+function fix_pkgconfig_files ()
+{
+	dir=$1
+	targetdir=$2
+	prefixdir=$3
+	actualdir=`readlink -f $targetdir/$prefixdir || echo $targetdir/$prefixdir`
+
+	# find and check
+	pctotal=`find $dir -type f -name "*.pc" | wc -l`
+	echo "Found $pctotal pc file(s) to fix."
+
+	if [ $pctotal -gt 0 ]; then
+		pcsample=`find $dir -type f -name "*.pc" | head -n1`
+		a=`cat $pcsample | grep ^prefix=`
+		prefixprev=${a##*=}
+		echo "Previous prefix was [$prefixprev]; will change to [$actualdir]"
+
+		for pcfile in `find $dir -type f -name "*.pc"`; do
+			[ ! -f $pcfile.orig ] && cp -p $pcfile $pcfile.orig
+			perl -i -p -e "s#^prefix\=${prefixprev}#prefix\=${actualdir}#g" $pcfile
+		done
+	fi
 }
 
 
