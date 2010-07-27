@@ -194,7 +194,8 @@ function main_loop() {
 function print_info_git() {
 	tag=`git describe --tags 2> /dev/null`
 	cid=`git log --oneline -1 2> /dev/null`
-	echo "$subcomp is known as [$tag]: $cid"
+	echo "$subcomp is [$tag]:"
+	echo "  $cid"
 }
 
 function print_info_dir() {
