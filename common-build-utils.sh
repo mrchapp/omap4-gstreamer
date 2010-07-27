@@ -62,15 +62,19 @@ function build_it() {
 	echo "### make $component"
 	(cd $build_dir; make -w -j4) || return 1
 
-	echo ""
-	echo "### fix pkgconfig files"
-	fix_pkgconfig_files $build_dir $TARGET $PREFIX || return 1
-
 	if [ $package = "true" ]; then
 		echo ""
 		echo "### package $component"
 		(cd $build_dir; $sudo_cmd make install DESTDIR=$TARGET) || return 1
 	fi
+
+	echo ""
+	echo "### fix pkgconfig files"
+	fix_pkgconfig_files $build_dir $TARGET $PREFIX || return 1
+
+	echo ""
+	echo "### fix la files"
+	fix_la_files $build_dir $TARGET $PREFIX || return 1
 
 	echo ""
 	echo "### install $component"
@@ -185,11 +189,44 @@ function fix_pkgconfig_files ()
 		pcsample=`find $dir -type f -name "*.pc" | head -n1`
 		a=`cat $pcsample | grep ^prefix=`
 		prefixprev=${a##*=}
-		echo "Previous prefix was [$prefixprev]; will change to [$actualdir]"
+		echo "Previous prefix was [${prefixprev}]; will change to [$actualdir]"
 
 		for pcfile in `find $dir -type f -name "*.pc"`; do
 			[ ! -f $pcfile.orig ] && cp -p $pcfile $pcfile.orig
 			perl -i -p -e "s#^prefix\=${prefixprev}#prefix\=${actualdir}#g" $pcfile
+		done
+	fi
+}
+
+
+function fix_la_files ()
+{
+	dir=$1
+	targetdir=$2
+	libdir=$3
+
+	[ "${libdir: -1:1}" = "/" ] || libdir="${libdir}/"
+	libdir=${libdir}lib
+
+	#actualdir=`readlink -f $targetdir/$libdir || echo $targetdir/$libdir`
+	actualdir=`echo $targetdir/$libdir`
+	echo "actualdir=[$actualdir]"
+
+	# find and check
+	latotal=`find $dir -type f -name "*.la" -o -name "*.lai" | wc -l`
+	echo "Found $latotal la file(s) to fix."
+
+	if [ $latotal -gt 0 ]; then
+		lasample=`find $dir -type f -name "*.la" -o -name "*.lai" | head -n1`
+		a=`cat $lasample | grep ^libdir=`
+		#libdirprev=${a##*=}
+		b=`echo $a | egrep -o ^libdir\=\'.*lib`
+		libdirprev=${b##*\=\'}
+		echo "Previous libdir was [${libdirprev}]; will change to [$actualdir]"
+
+		for lafile in `find $dir -type f -name "*.la" -o -name "*.lai"`; do
+			[ ! -f $lafile.orig ] && cp -p $lafile $lafile.orig
+			perl -i -p -e "s#${libdirprev}#${actualdir}#g" $lafile
 		done
 	fi
 }

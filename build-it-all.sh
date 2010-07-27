@@ -73,6 +73,7 @@ for arg in $*; do
 			;;
 		--prefix=*)
 			TARGET=${arg##*=}
+			# odd bug from libvpx: needs double slash
 			PREFIX=//
 			shift 1
 			;;
