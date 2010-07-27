@@ -110,7 +110,7 @@ export CFLAGS="-march=armv7-a -mtune=cortex-a8 -mfpu=neon -mfloat-abi=softfp -fn
 export echo=echo
 
 # work-around for aclocal:
-mkdir -p $TARGET/usr/share/aclocal
+mkdir -p $PREFIX/share/aclocal
 
 escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
 
@@ -136,7 +136,7 @@ cross_components="\
 # note: for now libvpx is in components section, because ubuntu package doesn't
 #   seem to exist yet
 components="\
-	libvpx            --target=armv7-linux-gcc --disable-vp8-encoder --enable-vp8-decoder --enable-pic --enable-debug
+	libvpx            --target=armv7-linux-gcc --disable-vp8-encoder --enable-vp8-decoder --enable-pic --enable-debug --prefix=$PREFIX
 	gstreamer         $CONFIG_GST_COMMON --with-buffer-alignment=128
 	omap4-omx/tiler/memmgr                  $CONFIG_COMMON
 	omap4-omx/syslink/syslink               $CONFIG_COMMON
