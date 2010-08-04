@@ -75,6 +75,14 @@ for arg in $*; do
 			PREFIX=${arg##*=}
 			shift 1
 			;;
+		--update)
+			update_only="true"
+			shift 1
+			;;
+		--no-update)
+			skip_update="true"
+			shift 1
+			;;
 		--help)
 			echo "$0 [--force-bootstrap] [--clean] [component-path]*"
 			echo "	--force-bootstrap  -  re-run bootstrap and configure even if it has already been run"
@@ -87,6 +95,8 @@ for arg in $*; do
 			echo "	--disable-*        -  passed to configure scripts"
 			echo "	--yes              -  say yes to all questions"
 			echo "	--prefix=/dir      -  set prefix to install in /dir"
+			echo "	--update           -  only update code and exit"
+			echo "	--no-update        -  do not update code"
 			echo "	--help             -  show usage"
 			echo ""
 			echo "  example:  $0 --force-bootstrap syslink/bridge audio-omx/system/lcml"
@@ -159,8 +169,13 @@ fi
 
 CFLAGS="$DEBUG_CFLAGS $CFLAGS"
 
-check_update_submodule_status . || exit $?
-check_update_submodule_status omap4-omx || exit $?
+if [ ! "$skip_update" = "true" ]; then
+	check_update_submodule_status . || exit $?
+	check_update_submodule_status omap4-omx || exit $?
+fi
+
+[ "$update_only" = "true" ] && exit 0
+
 yes_all="false"   # reset in case someone adds other calls to prompt_yes_no()
 
 # workaround for tiler build:
