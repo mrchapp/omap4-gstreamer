@@ -130,11 +130,19 @@ function git_update() {
 
 		# checkout specific branch (if there is one)
 		if [ -n "$gitbranch" ]; then
-			if [ ! "$gitbranch" = "master" ]; then
-				echo "Checking out branch $gitbranch..."
-				git checkout -b $gitbranch --track origin/$gitbranch
+			if [ -n "${gitbranch##tag:}" ]; then
+				# turns out it's a tag!
+				gittag="${gitbranch##tag:}"
+				echo "Checking out tag $gittag..."
+				git checkout -b local-$gittag --track $gittag
 			else
-				echo "Sticking to master branch"
+				# go with a branch
+				if [ ! "$gitbranch" = "master" ]; then
+					echo "Checking out branch $gitbranch..."
+					git checkout -b $gitbranch --track origin/$gitbranch
+				else
+					echo "Sticking to master branch"
+				fi
 			fi
 		fi
 	fi
