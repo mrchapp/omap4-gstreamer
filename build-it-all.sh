@@ -1,12 +1,10 @@
 #!/bin/bash
 
-cross_compile="true"
 package="false"
 sudo_cmd=""
 
 # Be nice in case user forgets to execute via scratchbox:
 if [ `uname -m` = "armv7l" ]; then
-	cross_compile="false"
 	sudo_cmd="sudo"
 elif [ `uname -m` != "arm" ]; then
 	SB2=`which sb2`
@@ -23,11 +21,7 @@ dir=`pwd`
 TARGET=${TARGET:-`pwd`/target}
 export NOCONFIGURE=1
 export AUTOGEN_SUBDIR_MODE=1
-if [ $cross_compile = "true" ]; then
-	PREFIX=$TARGET/usr
-else
-	PREFIX=/usr
-fi
+PREFIX=/usr
 
 source $dir/common-build-utils.sh
 
@@ -50,12 +44,6 @@ for arg in $*; do
 			;;
 		--debug)
 			DEBUG_CFLAGS="-g"
-			shift 1
-			;;
-		--package)
-			if [ $cross_compile = "false" ]; then
-				package="true"
-			fi
 			shift 1
 			;;
 		--docs)
@@ -88,7 +76,6 @@ for arg in $*; do
 			echo "	--force-bootstrap  -  re-run bootstrap and configure even if it has already been run"
 			echo "	--clean            -  clean derived objects"
 			echo "	--debug            -  build debug build"
-			echo "	--package          -  for non cross-compile builds, archive binaries"
 			echo "	--docs             -  enable docs build"
 			echo "	--with-*           -  passed to configure scripts"
 			echo "	--enable-*         -  passed to configure scripts"
@@ -127,22 +114,9 @@ escaped_target=`echo $TARGET | sed s/"\/"/"\\\\\\\\\/"/g`
 ###############################################################################
 # Components to build in dependency order with configure args:
 
-cross_args=""
-if [ $cross_compile = "true" ]; then
-	cross_args="--host=arm-none-linux-gnueabi"
-fi
-
-CONFIG_COMMON="$cross_args --prefix=$PREFIX"
+CONFIG_COMMON="--prefix=$PREFIX"
 CONFIG_GST_COMMON="$CONFIG_COMMON --disable-examples --disable-tests --disable-failing-tests --disable-valgrind"
 
-cross_components="\
-	bash              $CONFIG_COMMON
-	gtk-doc           $CONFIG_COMMON
-	glib              $CONFIG_COMMON
-	libxml2           $CONFIG_COMMON
-	liboil            $CONFIG_COMMON
-	faad2             $CONFIG_COMMON
-"
 # note: for now libvpx is in components section, because ubuntu package doesn't
 #   seem to exist yet
 components="\
@@ -161,11 +135,6 @@ components="\
 	gst-openmax       $CONFIG_GST_COMMON
 "
 # todo.. add gst-plugin-bc if dependencies are satisfied..
-
-if [ $cross_compile = "true" ]; then
-	components="$components
-	$cross_components"
-fi
 
 CFLAGS="$DEBUG_CFLAGS $CFLAGS"
 
