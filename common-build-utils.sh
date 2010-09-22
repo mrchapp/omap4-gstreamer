@@ -130,7 +130,7 @@ function git_update() {
 
 		# checkout specific branch (if there is one)
 		if [ -n "$gitbranch" ]; then
-			if [ -n "${gitbranch##tag:}" ]; then
+			if [ "${gitbranch:0:4}" = "tag:" ]; then
 				# turns out it's a tag!
 				gittag="${gitbranch##tag:}"
 				echo "Checking out tag $gittag..."
