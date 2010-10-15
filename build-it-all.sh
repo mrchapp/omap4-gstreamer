@@ -131,7 +131,6 @@ components="\
 	omap4-omx/syslink/syslink               $CONFIG_COMMON
 	omap4-omx/syslink/syslink/d2c           $CONFIG_COMMON
 	omap4-omx/domx                          $CONFIG_COMMON
-	ttif              $CONFIG_COMMON
 	gst-plugins-base  $CONFIG_GST_COMMON
 	gst-plugins-good  $CONFIG_GST_COMMON --enable-experimental
 	gst-plugins-bad   $CONFIG_GST_COMMON LDFLAGS=-L$PREFIX/lib CFLAGS=-I$PREFIX/include
