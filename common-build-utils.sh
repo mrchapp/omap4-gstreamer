@@ -107,6 +107,30 @@ function prompt_yes_no() {
 }
 
 
+function git_checkout_code() {
+	# checkout specific branch (if there is one)
+
+	if [ -n "$1" ]; then gitbranch="$1"; else gitbranch=""; fi
+
+	if [ -n "$gitbranch" ]; then
+		if [ "${gitbranch:0:4}" = "tag:" ]; then
+			# turns out it's a tag!
+			gittag="${gitbranch##tag:}"
+			echo "Checking out tag $gittag..."
+			git checkout -b local-$gittag --track $gittag
+		else
+			# go with a branch
+			if [ ! "$gitbranch" = "master" ]; then
+				echo "Checking out branch $gitbranch..."
+				git checkout -b $gitbranch --track origin/$gitbranch
+			else
+				echo "Sticking to master branch"
+			fi
+		fi
+	fi
+}
+
+
 function git_update() {
 	gitrepo=$1
 	gitbranch=$2
@@ -120,31 +144,20 @@ function git_update() {
 	fi
 
 	if [ "$have_checkout" = "true" ]; then
-		# try to pull from a predefined branch
-		git pull
+		if [ "$do_evolve" = "true" ]; then
+			# update to newer branch/tag
+			git_checkout_code "$gitbranch"
+		else
+			# try to pull from a predefined branch
+			git pull
+		fi
 	else
 		# we need to git-clone first, maybe
 		pushd .. > /dev/null
 		git clone $gitrepo $gitdir
 		popd > /dev/null
 
-		# checkout specific branch (if there is one)
-		if [ -n "$gitbranch" ]; then
-			if [ "${gitbranch:0:4}" = "tag:" ]; then
-				# turns out it's a tag!
-				gittag="${gitbranch##tag:}"
-				echo "Checking out tag $gittag..."
-				git checkout -b local-$gittag --track $gittag
-			else
-				# go with a branch
-				if [ ! "$gitbranch" = "master" ]; then
-					echo "Checking out branch $gitbranch..."
-					git checkout -b $gitbranch --track origin/$gitbranch
-				else
-					echo "Sticking to master branch"
-				fi
-			fi
-		fi
+		git_checkout_code "$gitbranch"
 	fi
 }
 

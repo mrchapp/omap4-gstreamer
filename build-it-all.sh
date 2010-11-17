@@ -71,6 +71,10 @@ for arg in $*; do
 			skip_update="true"
 			shift 1
 			;;
+		--evolve)
+			do_evolve="true"
+			shift 1
+			;;
 		--help)
 			echo "$0 [--force-bootstrap] [--clean] [component-path]*"
 			echo "	--force-bootstrap  -  re-run bootstrap and configure even if it has already been run"
@@ -84,6 +88,7 @@ for arg in $*; do
 			echo "	--prefix=/dir      -  set prefix to install in /dir"
 			echo "	--update           -  only update code and exit"
 			echo "	--no-update        -  do not update code"
+			echo "	--evolve           -  switch to newer branches/tags and exit"
 			echo "	--help             -  show usage"
 			echo ""
 			echo "  example:  $0 --force-bootstrap syslink/bridge audio-omx/system/lcml"
@@ -137,6 +142,11 @@ components="\
 # todo.. add gst-plugin-bc if dependencies are satisfied..
 
 CFLAGS="$DEBUG_CFLAGS $CFLAGS"
+
+if [ "$do_evolve" = "true" ]; then
+	skip_update="false";
+	update_only="true";
+fi
 
 if [ ! "$skip_update" = "true" ]; then
 	check_update_submodule_status . || exit $?
