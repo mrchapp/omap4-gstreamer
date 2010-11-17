@@ -107,6 +107,28 @@ function prompt_yes_no() {
 }
 
 
+function git_checkout_exitcode() {
+	[ -n "$1" ] && exitcode="$1"  || exitcode=0
+	[ -n "$2" ] && remoteref="$2" || remoteref=""
+	[ -n "$3" ] && localref="$3"  || localref=""
+
+	if [ $exitcode -eq 1 ]; then
+		# reference was not found
+		echo "Could not find remote reference."
+		exit $exitcode
+	elif [ $exitcode -eq 128 ]; then
+		# local branch already exists
+		echo "Branch already exists."
+		[ -n "$localref" ] && git checkout $localref
+		if [ -n "$remoteref" ]; then
+			echo "Resetting to remote reference."
+			git reset --hard $remoteref
+		fi
+		exit $exitcode
+	fi
+}
+
+
 function git_checkout_code() {
 	# checkout specific branch (if there is one)
 
@@ -118,11 +140,13 @@ function git_checkout_code() {
 			gittag="${gitbranch##tag:}"
 			echo "Checking out tag $gittag..."
 			git checkout -b local-$gittag --track $gittag
+			exitcode=$?; git_checkout_exitcode $exitcode $gittag local-$gittag
 		else
 			# go with a branch
 			if [ ! "$gitbranch" = "master" ]; then
 				echo "Checking out branch $gitbranch..."
-				git checkout -b $gitbranch --track origin/$gitbranch
+				git checkout -b local-$gitbranch --track origin/$gitbranch
+				exitcode=$?; git_checkout_exitcode $exitcode origin/$gitbranch local-$gitbranch
 			else
 				echo "Sticking to master branch"
 			fi
